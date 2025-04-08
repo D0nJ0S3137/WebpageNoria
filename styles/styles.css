@@ -1,0 +1,356 @@
+/* Color oficial de TrackerTruck */
+
+/* Estilos generales */
+html, body, .map-container {
+    height: 100%;
+    margin: 0;
+    overflow: hidden; /* Evita barras de desplazamiento */
+}
+
+#map-in-container {
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+}
+
+/* Estilos para el sidebar */
+.sidebar {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 450px; /* Ancho del sidebar */
+    height: 100%;
+    background-color: #FBB613; /* Color de fondo del sidebar */
+    z-index: 2;
+    transform: translateX(0%); /* Sidebar inicialmente abierto */
+    transition: transform 1s ease; /* Transición suave para abrir/cerrar el sidebar */
+}
+
+/* Estilos para el contenido del sidebar */
+.sidebar-content {
+    padding: 20px;
+    color: #000000; /* Color del texto en el sidebar */
+    z-index: 2;
+    text-align: center; /* Centra el contenido horizontalmente */
+    font-family: 'Inter', sans-serif; /* Fuente Inter */
+}
+
+.sidebar-content img {
+    display: block; /* Asegura que la imagen sea un bloque para poder aplicar márgenes automáticos */
+    margin: 20px auto 20px; /* Centra la imagen horizontalmente y añade margen inferior */
+    max-width: 100%; /* Ajusta el ancho máximo de la imagen */
+    height: auto; /* Permite que la altura de la imagen se ajuste automáticamente */
+}
+
+/* Estilos para el botón de cerrar el sidebar */
+.close-btn-container {
+    position: absolute;
+    top: 20px;
+    right: 15px;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    color: #000000;
+    z-index: 2;
+}
+
+.close-btn-text {
+    font-family: 'Inter', sans-serif;
+    font-size: 16px;
+    margin-right: 0; /* Reduce el espacio entre el texto y el icono */
+}
+
+a{
+    text-decoration: none;
+    color: inherit;
+}
+/* BOTONES DEL CONTAINER: MAPA ----------------------------------------------------- */
+.rastreador, .recorridosBtn, .centrarMapaBtn, .infoBtn {
+    position: absolute;
+    cursor: pointer;
+    color: #000000; /* Color del texto del botón */
+    z-index: 1; /* Asegura que esté sobre el mapa y debajo del sidebar */
+    background-color: #FBB613; /* Color de fondo amarillo */
+    border: 2px solid #000000; /* Contorno negro */
+    border-radius: 50%; /* Bordes redondeados */
+    padding: 10px; /* Añade espacio interno al botón */
+    width: 50px; /* Ancho del botón */
+    height: 50px; /* Altura del botón */
+    font-size: 25px; /* Tamaño de fuente */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Botones en la esquina superior izquierda */
+.infoBtn {
+    top: 20px;
+    left: 20px;
+}
+
+.rastreador {
+    top: 85px;
+    left: 20px;
+}
+
+.recorridosBtn {
+    top: 150px;
+    left: 20px;
+}
+
+.centrarMapaBtn {
+    bottom: 20px;
+    left: 20px;
+}
+
+/* Estilo para los sidebars */
+.sidebar {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 450px;
+    height: 100%;
+    background-color: #FBB613;
+    z-index: 2;
+    transform: translateX(100%);
+    transition: transform 1s ease; /* Aumentar la duración de la transición a 1 segundo */
+}
+
+.sidebar-content {
+    padding: 20px;
+    color: #000000;
+    text-align: center;
+    font-family: 'Inter', sans-serif; /* Fuente Inter */
+}
+
+/* Estilo para el texto de introducción */
+.intro-text {
+    font-family: 'Inter', sans-serif; /* Fuente Inter */
+    margin-bottom: 20px;
+    font-size: 20px; /* Ajusta este valor para cambiar el tamaño de la letra */
+}
+
+/* Estilo para el contenedor de botones */
+.button-container {
+    display: flex;
+    flex-direction: column; /* Cambiar a columna para apilar los botones verticalmente */
+    align-items: center;
+    gap: 20px; /* Ajustar el espacio entre los botones */
+    margin-top: 20px;
+}
+
+/* Estilo para los botones del sidebar de información */
+/* Estilo para los sidebars */
+.sidebar {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 450px;
+    height: 100%;
+    background-color: #FBB613;
+    z-index: 2;
+    transform: translateX(100%);
+    transition: transform 1s ease; /* Aumentar la duración de la transición a 1 segundo */
+}
+
+.sidebar-content {
+    padding: 20px;
+    color: #000000;
+    text-align: center;
+    font-family: 'Inter', sans-serif; /* Fuente Inter */
+}
+
+/* Estilo para el texto de introducción */
+.intro-text {
+    font-family: 'Inter', sans-serif; /* Fuente Inter */
+    margin-bottom: 20px;
+    font-size: 14px; /* Ajusta este valor para cambiar el tamaño de la letra */
+}
+
+/* Estilo para el contenedor de botones */
+.button-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+/* Estilo para los botones del sidebar de información */
+.info-sidebar-button {
+    width: 80%;
+    padding: 18px;
+    background-color: #000000;
+    color: #FFFFFF;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif; /* Fuente Inter */
+    font-size: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.info-sidebar-button i {
+    font-size: 36px;
+    margin-bottom: 5px;
+}
+
+.info-sidebar-button small {
+    font-size: 14px;
+}
+/* Estilos para el menú desplegable */
+select.dropdown {
+    width: 80%; /* Ancho del menú desplegable */
+    margin-top: 20px; /* Ajusta el margen inferior según sea necesario */
+    margin-bottom: 5px; /* Ajusta el margen inferior según sea necesario */
+    margin-inline: auto; /* Margen superior e inferior de 20px, centrado horizontalmente */
+    padding: 10px; /* Espacio interno */
+    font-size: 18px; /* Tamaño de fuente */
+    background-color: #ffffff; /* Color de fondo */
+    border: 3px solid #000000; /* Contorno */
+    border-radius: 10px; /* Bordes redondeados */
+    cursor: pointer; /* Cursor */
+    color: #000000; /* Color de texto */
+}
+
+/* Estilos para los rectángulos */
+.rectangle-container {
+    display: flex;
+    flex-direction: column; /* Columna */
+}
+
+.rectangle {
+    width: 80%; /* Ancho del rectángulo */
+    height: 50px; /* Altura del rectángulo */
+    background-color: #F3D693; /* Color de fondo del rectángulo */
+    border: 3px solid #F3D693; /* Contorno negro */
+    border-radius: 10px; /* Bordes redondeados */
+    padding: 10px; /* Espacio interno */
+    font-size: 16px; /* Tamaño de fuente */
+    margin-bottom: 1px; /* Espacio entre rectángulos */
+    display: flex;
+    align-items: center; /* Centrado vertical */
+    margin: 5px auto; /* Margen superior e inferior de 30px, centrado horizontalmente */
+}
+
+.rectangle i {
+    margin-right: 15px; /* Espacio entre icono y texto */
+}
+
+.sidebar-content p {
+    width: 80%; /* Ancho deseado */
+    margin: 0 auto; /* Centra horizontalmente */
+    margin-bottom: 30px; /* Ajusta el margen inferior según sea necesario */
+    font-size: 16px; /* Tamaño de fuente */
+}
+
+/* Ocultar la 'T' */
+#date::after {
+    content: ' ';
+    font-size: 0;
+}
+
+/* Reducir el tamaño de los ceros iniciales */
+#time span.zero {
+    font-size: 0; /* Hace que los ceros sean invisibles */
+    color: transparent; /* O hace los ceros transparentes */
+}
+
+.latitude, .longitude {
+    display: none; /* Oculta los elementos y su espacio */
+}
+
+.rectangle i.material-icons {
+    vertical-align: middle; /* Alinea el icono verticalmente con el texto */
+    margin-right: 8px; /* Espacio entre el icono y el texto */
+}
+
+.rectangle span {
+    vertical-align: middle; /* Asegura que todo el texto está alineado verticalmente */
+    display: inline-block;
+    margin-right: 10px; /* Espacio entre el título y el valor */
+}
+
+.rectangle #RPM, 
+.rectangle #date, 
+.rectangle #time {
+    float: right; /* Alinea los valores hacia la derecha dentro de su contenedor */
+}
+
+.rectangle {
+    overflow: hidden; /* Contiene elementos flotantes dentro del div */
+}
+
+#rpmGauge {
+    width: 300px; /* O el tamaño que necesites */
+    height: 160px; /* O el tamaño que necesites */
+}
+
+.gauge-label {
+    font-weight: bold;
+}
+
+/* Mover los botones de zoom de Leaflet a la parte inferior derecha */
+.leaflet-control-zoom {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+}
+
+/*CONFIGURACIÓN: WEB RESPONSIVE*/
+@media (max-width: 768px) {
+    /* Estilos para pantallas pequeñas */
+    .sidebar {
+        width: 100%; /* Ancho del sidebar en pantallas pequeñas */
+    }
+    .sidebar-content img {
+        max-width: 100%; /* Ajusta el ancho máximo de la imagen en pantallas pequeñas */
+    }
+    select.dropdown {
+        width: 90%; /* Ancho completo del menú desplegable en pantallas pequeñas */
+    }
+
+    /* Ajustes específicos para el gauge en pantallas pequeñas */
+    .tacometer-container {
+        width: 100%; /* Ajusta el ancho para pantallas pequeñas */
+        max-width: 300px; /* Ancho máximo para evitar desbordamientos */
+        margin: 20px auto;
+    }
+
+    #rpmGauge {
+        width: 100%;
+        height: auto; /* Ajusta la altura automáticamente */
+    }
+
+    /* Ajustes específicos para las cajas de información en pantallas pequeñas */
+    .rectangle {
+        width: 90%; /* Ajusta el ancho en pantallas pequeñas */
+        height: 35px; /* Ajusta la altura en pantallas pequeñas */
+        font-size: 12px; /* Ajusta el tamaño de fuente en pantallas pequeñas */
+    }
+}
+/* Ocultar el contenedor de tacómetro RPM */
+.tacometer-container {
+    display: none;
+}
+
+/* Ocultar el rectángulo que muestra el valor RPM */
+.rpmDescription {
+    display: none;
+}
+
+
+.titulo-llamativo {
+    font-size: 3em; /* Tamaño grande del texto */
+    color: #f4c20d; /* Color llamativo del texto (amarillo) */
+    text-align: center; /* Centrar el texto */
+    margin: 20px 0; /* Espacio alrededor */
+    font-weight: bold; /* Negrita */
+    text-shadow: 2px 2px 4px #000000; /* Sombra de texto */
+    background-color: #000000; /* Fondo negro */
+    padding: 20px; /* Espaciado interno */
+    border-radius: 10px; /* Bordes redondeados opcionales */
+    display: inline-block; /* Hace que el fondo se ajuste al tamaño del texto */
+}

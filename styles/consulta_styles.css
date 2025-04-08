@@ -1,0 +1,321 @@
+/* Estilos generales */
+html, body, .map-container {
+    height: 100%;
+    margin: 0;
+    overflow: hidden; 
+    font-family: 'Roboto', sans-serif; 
+}
+
+#map-in-container {
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+}
+
+.tacometer-container {
+    width: 300px;
+    margin: 20px auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#rpmGauge {
+    width: 100%; 
+    height: auto; 
+    display: block;
+}
+
+/* Estilos para los rectángulos */
+.rectangle-container {
+    display: flex;
+    flex-direction: column;
+}
+
+.rectangle {
+    width: 80%; 
+    height: 40px; 
+    background-color: #FFFFFF;
+    border: 3px solid #000000; 
+    border-radius: 10px; 
+    padding: 10px;
+    font-size: 14px; 
+    margin-bottom: 10px; 
+    display: flex;
+    align-items: center;
+    margin: 5px auto; 
+    font-family: 'Roboto', sans-serif; 
+}
+
+.rectangle i {
+    margin-right: 10px;
+}
+
+
+#date::after {
+    content: ' ';
+    font-size: 0;
+}
+
+/* Reducir el tamaño de los ceros iniciales */
+#time span.zero {
+    font-size: 0; 
+    color: transparent; 
+}
+
+.latitude, .longitude {
+    display: none; 
+}
+
+.rectangle i.material-icons {
+    vertical-align: middle; 
+    margin-right: 8px; 
+}
+
+.rectangle span {
+    vertical-align: middle; 
+    display: inline-block;
+    margin-right: 10px;
+}
+
+.rectangle #RPM, 
+.rectangle #date, 
+.rectangle #time {
+    float: right; /* Alinea los valores hacia la derecha dentro de su contenedor */
+}
+
+.rectangle {
+    overflow: hidden; /* Contiene elementos flotantes dentro del div */
+}
+
+.gauge-label {
+    font-weight: bold;
+}
+
+/* Estilos personalizados */
+#mapid {
+    height: 65vh; 
+    width: 100vw;
+}
+
+.container-map, .container {
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 0; 
+    position: relative;
+    z-index: 0;
+}
+
+.card {
+    box-shadow: none; 
+    border: none; 
+}
+
+.card-body {
+    padding: 5px; /* Reducir el padding */
+}
+
+.form-label {
+    margin-bottom: 0.2rem; /* Reducir el margen */
+}
+
+.subtitle {
+    font-size: 0.8em;
+    color: #343a40; 
+    text-align: center;
+    margin-top: 10px; 
+    margin-bottom: 10px; 
+    font-family: 'Inter', sans-serif; 
+    font-weight: 500; 
+    letter-spacing: 0.5px; 
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1); /* Sombra sutil para profundidad */
+}
+
+
+.form-inline-custom {
+    display: flex;
+    gap: 5px; /* Reducir el espacio entre elementos */
+    flex-wrap: wrap; 
+    align-items: center; 
+    justify-content: center; 
+}
+
+.btn-custom {
+    padding: .25rem .5rem; /* Reducir el padding del botón */
+}
+
+.small-title {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 20px; /* Reducir el tamaño de la fuente */
+    font-weight: bold; /* Aplicar negrita */
+    text-decoration: underline;
+}
+
+#startDateSpan, #startTimeSpan, #endDateSpan, #endTimeSpan {
+    display: none;
+}
+
+.date-time-info {
+    position: absolute;
+    width: 0.8px;
+    height: 0.8px;
+    overflow: hidden;
+    clip: rect(0-8px, 0.8px, 0.8px, 0.8px);
+}
+
+.navbar {
+    padding: 0.25rem 1rem; /* Reducir el padding de la navbar */
+}
+
+.form-inline-custom .form-control, .form-inline-custom .btn-custom {
+    margin-bottom: 0;
+}
+
+.row1 {
+    display: flex;
+    justify-content: space-between;
+}
+
+.btn-consistent-size {
+    padding: .25rem .5rem; /* Reducir el padding del botón */
+}
+
+#timeSlider {
+    display: none;
+    width: 100%;
+    max-width: 400px; 
+    margin: 5px auto; /* Reducir el margen */
+}
+
+#gaugeContainer {
+    position: absolute;
+    bottom: 20px;
+    right: 10px; /* Disminuir este valor para mover el tacómetro más a la derecha */
+    width: 300px;
+    z-index: 1000;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    background-color: rgba(255, 255, 255, 0.867); 
+    border-radius: 10px; /* Bordes redondeados */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Sombra */
+    padding: 10px; /* Espacio interno */
+}
+
+#titleRpmGauge {
+    font-family: 'Roboto', sans-serif;
+    font-size: 16px;
+    color: black;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 5px; /* Espacio entre el título y el gauge */
+}
+
+/* Estilos para el gauge */
+#rpmGaugeMap {
+    width: 100%;
+    height: auto;
+}
+
+#vehicleSelector {
+    position: relative; /* Posición relativa para el pseudo-elemento */
+    width: 140px; /* Reducir el ancho */
+    background-color: #343a40;
+    color: white;
+    border: none;
+    margin-right: 5px;
+    -webkit-appearance: none; 
+    -moz-appearance: none; 
+    appearance: none;
+}
+
+#vehicleSelector::after {
+    content: "\f107"; 
+    font-family: 'FontAwesome';
+    position: absolute;
+    right: 5px; /* Reducir la distancia desde la derecha */
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none; 
+    color: white;
+}
+.homeBtn, .infoBtn {
+    position: absolute;
+    cursor: pointer;
+    color: #000000; 
+    z-index: 1; 
+    background-color: #FBB613; 
+    border: 2px solid #000000; 
+    border-radius: 50%; 
+    padding: 10px;
+    width: 50px; 
+    height: 50px; 
+    font-size: 25px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Botones en la esquina superior izquierda */
+.homeBtn {
+    top: 385px;
+    left: 20px;
+    display: flex;
+}
+
+.infoBtn {
+    top: 445px;
+    left: 20px;
+    display: flex;
+}
+a{
+    text-decoration: none;
+    color: inherit;
+}
+
+/* Media query para dispositivos móviles */
+@media (max-width: 768px) {
+    html, body, .map-container {
+        height: auto; 
+        overflow: auto; 
+    }
+
+    .tacometer-container {
+        width: 100%; 
+        max-width: 300px;
+        margin: 20px auto;
+    }
+
+    #rpmGauge {
+        width: 100%;
+        height: auto; /* Ajusta la altura automáticamente */
+    }
+
+
+ 
+    #gaugeContainer {
+        width: 200px;
+        bottom: 10px; /* Ajustar la posición desde abajo */
+        right: 5px; 
+    }
+
+    #titleRpmGauge {
+        font-size: 14px; 
+    }
+
+    #timeSlider {
+        width: 90%;
+        max-width: 100%; 
+        margin: 5px auto; 
+    }
+    .subtitle {
+        font-size: 0.55em; 
+        margin-top: 5px; 
+        margin-bottom: 5px; 
+        width: 95%;
+        margin: 5px auto;
+    }
+}
+.tacometer-container{
+    display: none;
+}
