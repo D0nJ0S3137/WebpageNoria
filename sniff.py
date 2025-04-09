@@ -4,10 +4,10 @@ from datetime import datetime
 
 # Configuración del socket
 UDP_IP = "0.0.0.0"  # Escuchar en todas las interfaces
-UDP_PORT = 20000
+UDP_PORT = 3000
 
 # Configuración del servidor web
-web_server_url = "http://52.201.18.119:80/updateFromSniffer"
+web_server_url = "http://3.84.202.213:5000/updateFromSniffer"
 
 def extract_gps_info(data):
     decoded_data = data.decode('utf-8','replace').strip().split(',')
