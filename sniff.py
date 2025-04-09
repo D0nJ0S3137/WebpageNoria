@@ -20,18 +20,17 @@ def extract_gps_info(data):
     hora = datetime_obj.strftime("%H:%M:%S")
 
     gps_info = {
-        "Id": id,
         "Latitude": latitud,
         "Longitude": longitud,
         "Date": fecha,
         "Time": hora
     }
 
-    if optional and optional[0]:
-        rpm_str = optional[0].strip()
-        if ":" in rpm_str:
-            rpm = int(rpm_str.split(":")[1])
-            gps_info["RPM"] = rpm
+    # if optional and optional[0]:
+    #     rpm_str = optional[0].strip()
+    #     if ":" in rpm_str:
+    #         rpm = int(rpm_str.split(":")[1])
+    #         gps_info["RPM"] = rpm
 
     return gps_info
 
