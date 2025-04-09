@@ -11,8 +11,7 @@ web_server_url = "http://3.84.202.213:5000/updateFromSniffer"
 
 def extract_gps_info(data):
     decoded_data = data.decode('utf-8','replace').strip().split(',')
-    id_str, latitud_str, longitud_str, timestamp_str, *optional = decoded_data
-    id = id_str.split(":")[1].strip()
+    latitud_str, longitud_str, timestamp_str, *optional = decoded_data
     latitud = float(latitud_str.split(":")[1].strip())
     longitud = float(longitud_str.split(":")[1].strip())
     timestamp_str = timestamp_str.replace("Timestamp:", "").strip()
