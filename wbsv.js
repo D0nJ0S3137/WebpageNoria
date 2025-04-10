@@ -94,13 +94,7 @@ app.post('/updateFromSniffer', (req, res) => {
   const insertQuery = `INSERT INTO ${table} ${fields} VALUES ${placeholders}`;
 
 
-  app.post('/FromSniffer', (req, res) => {
-    const { Latitude, Longitude, Date, Time } = req.body;
-    console.log(`Direct update - Fecha: ${Date}, Hora: ${Time}, Latitud: ${Latitude}, Longitud: ${Longitude}`);
-    const event = 'locationUpdate1'; 
-    io.emit(event, { Latitude, Longitude, Date, Time});
-    res.status(200).send('OK');
-  });
+  
   // Ejecutar la consulta de inserción
   dbConnection.query(insertQuery, insertValues, (err, results) => {
     if (err) {
@@ -108,12 +102,18 @@ app.post('/updateFromSniffer', (req, res) => {
       return res.status(500).send('Internal Server Error');
     }
     // Emitir la actualización a clientes conectados a través de Socket.IO
-     
+    const event = 'locationUpdate1';
     io.emit(event, { Latitude, Longitude, Date, Time });
     res.status(200).send('OK');
   });
 });
-
+app.post('/FromSniffer', (req, res) => {
+  const { Latitude, Longitude, Date, Time } = req.body;
+  console.log(`Direct update - Fecha: ${Date}, Hora: ${Time}, Latitud: ${Latitude}, Longitud: ${Longitude}`);
+  const event = 'locationUpdate1'; 
+  io.emit(event, { Latitude, Longitude, Date, Time});
+  res.status(200).send('OK');
+});
 
 // Servir el archivo HTML index
 app.get('/', (req, res) => {
