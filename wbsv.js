@@ -206,7 +206,7 @@ app.get('/consulta-historicos', (req, res) => {
 
   const query = `
       SELECT Latitude, Longitude, CONCAT(Date, ' ', Time) AS DateTime
-      FROM p2GPS2
+      FROM Noria_database
       WHERE (Date > ? OR (Date = ? AND Time >= ?))
         AND (Date < ? OR (Date = ? AND Time <= ?))`;
 
