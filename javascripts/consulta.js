@@ -22,9 +22,10 @@ let decoradores2 = []; // Almacena las instancias de los decoradores de flechas
 let rpmGaugeHistoric;
 let marcadorDeslizable1 = null;
 let marcadorDeslizable2 = null;
+let myMap;
 
 document.addEventListener('DOMContentLoaded', () => {
-    const myMap = L.map('mapid').setView([11.02115114, -74.84057200], 13);
+    myMap = L.map('mapid').setView([11.02115114, -74.84057200], 13);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(myMap);
