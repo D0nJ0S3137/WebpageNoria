@@ -5,6 +5,7 @@ const mysql = require('mysql2');
 const express = require('express');
 const path = require('path');
 require('dotenv').config({ path: path.resolve(__dirname, '/home/ubuntu/.env') });
+app.use('/assets/data', express.static(path.join(__dirname, 'assets/data')));
 
 const app = express();
 app.use(express.static(path.join(__dirname, 'javascripts')));

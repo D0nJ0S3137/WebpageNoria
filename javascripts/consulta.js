@@ -29,6 +29,16 @@ document.addEventListener('DOMContentLoaded', () => {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(myMap);
 
+    let turfIdealLines;
+    L.geoJSON([], {}).addTo(myMap);
+    fetch('/assets/data/Layers.json')
+        .then(response => response.json())
+        .then(geojson =>{
+            L.geoJSON(geojson, {
+                style: { color: 'green', weight: 4, opacity: 0.7 },
+        }).addTo(myMap);
+        turfIdealLines = geojson;
+        }).catch(error => console.error('Error al cargar el archivo JSON:', error));
     // Inicializar el tacómetro
     rpmGaugeHistoric = new Gauge(document.getElementById("rpmGaugeMap")).setOptions({
         angle: 0.20, 
@@ -187,6 +197,26 @@ function cargarDatos(startDateTime, endDateTime, myMap) {
                 alert("Hubo un problema al cargar los datos.");
                 document.getElementById('timeSlider').style.display = 'none';
             });
+            if (turfIdealLines){
+                const lineCoords = turfIdealLines.features
+                    .map(f => f.geometry.coordinates)
+                    .flat();
+                const turfLine = turf.lineString(lineCoords);
+                const errores = data.map(pt => {
+                    const punto = turf.point([pt.Longitude, pt.Latitude]);
+                    return turf.pointToLineDistance(punto, turfLine, { units: 'meters' });
+                })
+                const suma = errores.reduce((a,b) => a + b, 0);
+                const media = suma / errores.length;
+                const maximo = Math.max(...errores);
+                const varianza = errores.reduce((a,d) => a + Math.pow(d - media, 2), 0) / errores.length;
+                const desviacion = Math.sqrt(varianza);
+                document.getElementById('errorStats').innerHTML = `
+                    <p><strong>Error Medio:</strong> ${media.toFixed(1)} m</p>
+                    <p><strong>Error Máximo:</strong> ${maximo.toFixed(1)} m</p>
+                    <p><strong>Desviación Estándar:</strong> ${desviacion.toFixed(1)} m</p>
+                `;
+            }   
     }
 }
 
@@ -218,6 +248,26 @@ function cargarDatos2(startDateTime, endDateTime, myMap) {
                 alert("Hubo un problema al cargar los datos.");
                 document.getElementById('timeSlider').style.display = 'none';
             });
+            if (turfIdealLines){
+                const lineCoords = turfIdealLines.features
+                    .map(f => f.geometry.coordinates)
+                    .flat();
+                const turfLine = turf.lineString(lineCoords);
+                const errores = data.map(pt => {
+                    const punto = turf.point([pt.Longitude, pt.Latitude]);
+                    return turf.pointToLineDistance(punto, turfLine, { units: 'meters' });
+                })
+                const suma = errores.reduce((a,b) => a + b, 0);
+                const media = suma / errores.length;
+                const maximo = Math.max(...errores);
+                const varianza = errores.reduce((a,d) => a + Math.pow(d - media, 2), 0) / errores.length;
+                const desviacion = Math.sqrt(varianza);
+                document.getElementById('errorStats').innerHTML = `
+                    <p><strong>Error Medio:</strong> ${media.toFixed(1)} m</p>
+                    <p><strong>Error Máximo:</strong> ${maximo.toFixed(1)} m</p>
+                    <p><strong>Desviación Estándar:</strong> ${desviacion.toFixed(1)} m</p>
+                `;
+            }   
     }
 }
 
