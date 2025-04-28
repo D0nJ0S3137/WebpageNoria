@@ -19,12 +19,24 @@
     fetch('/assets/data/Layers.geojson')
         .then(response => response.json())
         .then(geojson =>{
-            turfIdealLines = geojson;
-            L.geoJSON(geojson, {
+            console.log('GeoJSON cargado:', geojson);
+            const lineas = geojson.features.filter(f => f.geometry.type === 'LineString');
+
+            if (lineas.length > 0){
+                const lineCollection = {
+                    type: 'FeatureCollection',
+                    features: lineas
+                };
+                L.geoJSON(geojson, {
                 style: { color: 'green', weight: 4, opacity: 0.7 },
-        }).addTo(myMap);
+                }).addTo(myMap);
+                turfIdealLines = geojson;
+            }else{
+                console.error('No se encontraron líneas en el GeoJSON.');
+            }
+        })
         }).catch(error => console.error('Error al cargar el archivo JSON:', error));
-    });
+        
    </script>
 </head>
 <body>
