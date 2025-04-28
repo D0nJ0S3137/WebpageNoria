@@ -29,16 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(myMap);
 
-    let turfIdealLines;
-    L.geoJSON([], {}).addTo(myMap);
-    fetch('/assets/data/Layers.json')
-        .then(response => response.json())
-        .then(geojson =>{
-            L.geoJSON(geojson, {
-                style: { color: 'green', weight: 4, opacity: 0.7 },
-        }).addTo(myMap);
-        turfIdealLines = geojson;
-        }).catch(error => console.error('Error al cargar el archivo JSON:', error));
+    
     // Inicializar el tacómetro
     rpmGaugeHistoric = new Gauge(document.getElementById("rpmGaugeMap")).setOptions({
         angle: 0.20, 
