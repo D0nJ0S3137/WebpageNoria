@@ -208,7 +208,8 @@ function cargarDatos(startDateTime, endDateTime, myMap) {
                     <p><strong>Error Máximo:</strong> ${maximo.toFixed(1)} m</p>
                     <p><strong>Desviación Estándar:</strong> ${desviacion.toFixed(1)} m</p>
                 `;
-            }   
+            }
+            processErrors(data);   
     }
 }
 
@@ -260,6 +261,7 @@ function cargarDatos2(startDateTime, endDateTime, myMap) {
                     <p><strong>Desviación Estándar:</strong> ${desviacion.toFixed(1)} m</p>
                 `;
             }   
+        processErrors(data2);
     }
 }
 

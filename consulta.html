@@ -13,6 +13,7 @@
    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" rel="stylesheet">
    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&family=Roboto:wght@400&display=swap" rel="stylesheet">
    <script src="https://cdn.jsdelivr.net/npm/gaugeJS/dist/gauge.min.js"></script>
+   
    <script>
     let turfIdealLines;
     document.addEventListener('DOMContentLoaded', () => {
@@ -100,8 +101,9 @@
                         <div class="col-md-4 d-flex align-items-end"> 
                             <button type="submit" id="submitButton" class="btn btn-custom btn-sm w-100" style="background-color: #000000; color: white;">Mostrar Rutas</button>
                         </div>
-                        <div id ="errorStats" class="mt-3 p-2 border rounded bg-light">
-
+                        <div id="errorStats" class="mt-3 p-2 border rounded bg-light">
+                            <h5><b>Estadísticas de Error</b></h5>
+                            <div id="errorContent">No hay error calculado aún.</div>
                         </div>
                     </div>
                 </div>
@@ -172,6 +174,7 @@
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script src="consulta.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@turf/@turg@6/turf.min.js"></script>
+<script src="errorMetrics.js"></script>
 
 <script>
 // Inicialización de Flatpickr para la fecha de inicio
