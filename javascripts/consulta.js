@@ -124,6 +124,7 @@ function cargarDatos(startDateTime, endDateTime, myMap) {
             })
             .then(data => {
                 console.log(data);
+
                 if (data.length > 0) {
                     trayectos.forEach(trayecto => trayecto.remove());
                     trayectos = [];
@@ -179,6 +180,32 @@ function cargarDatos(startDateTime, endDateTime, myMap) {
                         }).addTo(myMap);
                     }
                     actualizarSlider(data, myMap);
+
+                    // 🚀🚀🚀 CALCULAR ERRORES AQUÍ DENTRO
+                    if (turfIdealLines) {
+                        const lineCoords = turfIdealLines.features
+                            .map(f => f.geometry.coordinates)
+                            .flat();
+                        const turfLine = turf.lineString(lineCoords);
+                        const errores = data.map(pt => {
+                            const punto = turf.point([pt.Longitude, pt.Latitude]);
+                            return turf.pointToLineDistance(punto, turfLine, { units: 'meters' });
+                        });
+                        const suma = errores.reduce((a,b) => a + b, 0);
+                        const media = suma / errores.length;
+                        const maximo = Math.max(...errores);
+                        const varianza = errores.reduce((a,d) => a + Math.pow(d - media, 2), 0) / errores.length;
+                        const desviacion = Math.sqrt(varianza);
+
+                        document.getElementById('errorContent').innerHTML = `
+                            <p><strong>Error Medio:</strong> ${media.toFixed(1)} m</p>
+                            <p><strong>Error Máximo:</strong> ${maximo.toFixed(1)} m</p>
+                            <p><strong>Desviación Estándar:</strong> ${desviacion.toFixed(1)} m</p>
+                        `;
+                    }
+                    // (O simplemente puedes llamar processErrors(data) aquí)
+                    // processErrors(data);
+
                 } else {
                     alert("No hay datos de ruta disponibles para la ventana de tiempo seleccionada.");
                     document.getElementById('timeSlider').style.display = 'none';
@@ -189,29 +216,9 @@ function cargarDatos(startDateTime, endDateTime, myMap) {
                 alert("Hubo un problema al cargar los datos.");
                 document.getElementById('timeSlider').style.display = 'none';
             });
-            if (turfIdealLines){
-                const lineCoords = turfIdealLines.features
-                    .map(f => f.geometry.coordinates)
-                    .flat();
-                const turfLine = turf.lineString(lineCoords);
-                const errores = data.map(pt => {
-                    const punto = turf.point([pt.Longitude, pt.Latitude]);
-                    return turf.pointToLineDistance(punto, turfLine, { units: 'meters' });
-                })
-                const suma = errores.reduce((a,b) => a + b, 0);
-                const media = suma / errores.length;
-                const maximo = Math.max(...errores);
-                const varianza = errores.reduce((a,d) => a + Math.pow(d - media, 2), 0) / errores.length;
-                const desviacion = Math.sqrt(varianza);
-                document.getElementById('errorStats').innerHTML = `
-                    <p><strong>Error Medio:</strong> ${media.toFixed(1)} m</p>
-                    <p><strong>Error Máximo:</strong> ${maximo.toFixed(1)} m</p>
-                    <p><strong>Desviación Estándar:</strong> ${desviacion.toFixed(1)} m</p>
-                `;
-            }
-            processErrors(data);   
     }
 }
+
 
 
 function cargarDatos2(startDateTime, endDateTime, myMap) {
@@ -231,6 +238,33 @@ function cargarDatos2(startDateTime, endDateTime, myMap) {
                 if (data2.length > 0) {
                     procesarDatosVehiculo(data2, myMap, 'red', truckIcon, false);
                     actualizarSlider(data2, myMap);
+
+                    // 🚀🚀🚀 CALCULAR ERRORES AQUÍ DENTRO
+                    if (turfIdealLines) {
+                        const lineCoords = turfIdealLines.features
+                            .map(f => f.geometry.coordinates)
+                            .flat();
+                        const turfLine = turf.lineString(lineCoords);
+                        const errores = data2.map(pt => {
+                            const punto = turf.point([pt.Longitude, pt.Latitude]);
+                            return turf.pointToLineDistance(punto, turfLine, { units: 'meters' });
+                        });
+                        const suma = errores.reduce((a, b) => a + b, 0);
+                        const media = suma / errores.length;
+                        const maximo = Math.max(...errores);
+                        const varianza = errores.reduce((a, d) => a + Math.pow(d - media, 2), 0) / errores.length;
+                        const desviacion = Math.sqrt(varianza);
+
+                        document.getElementById('errorContent').innerHTML = `
+                            <p><strong>Error Medio:</strong> ${media.toFixed(1)} m</p>
+                            <p><strong>Error Máximo:</strong> ${maximo.toFixed(1)} m</p>
+                            <p><strong>Desviación Estándar:</strong> ${desviacion.toFixed(1)} m</p>
+                        `;
+                    }
+
+                    // (O simplemente puedes llamar processErrors(data2); aquí)
+                    // processErrors(data2);
+
                 } else {
                     alert("No hay datos de ruta disponibles para la ventana de tiempo seleccionada.");
                     document.getElementById('timeSlider').style.display = 'none';
@@ -241,29 +275,9 @@ function cargarDatos2(startDateTime, endDateTime, myMap) {
                 alert("Hubo un problema al cargar los datos.");
                 document.getElementById('timeSlider').style.display = 'none';
             });
-            if (turfIdealLines){
-                const lineCoords = turfIdealLines.features
-                    .map(f => f.geometry.coordinates)
-                    .flat();
-                const turfLine = turf.lineString(lineCoords);
-                const errores = data.map(pt => {
-                    const punto = turf.point([pt.Longitude, pt.Latitude]);
-                    return turf.pointToLineDistance(punto, turfLine, { units: 'meters' });
-                })
-                const suma = errores.reduce((a,b) => a + b, 0);
-                const media = suma / errores.length;
-                const maximo = Math.max(...errores);
-                const varianza = errores.reduce((a,d) => a + Math.pow(d - media, 2), 0) / errores.length;
-                const desviacion = Math.sqrt(varianza);
-                document.getElementById('errorStats').innerHTML = `
-                    <p><strong>Error Medio:</strong> ${media.toFixed(1)} m</p>
-                    <p><strong>Error Máximo:</strong> ${maximo.toFixed(1)} m</p>
-                    <p><strong>Desviación Estándar:</strong> ${desviacion.toFixed(1)} m</p>
-                `;
-            }   
-        processErrors(data2);
     }
 }
+
 
 
 function updateDateTimeDisplay(startDateTime, endDateTime) {
