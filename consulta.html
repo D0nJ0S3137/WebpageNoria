@@ -16,7 +16,7 @@
    <script>
     let turfIdealLines;
     document.addEventListener('DOMContentLoaded', () => {
-    fetch('/assets/data/Layers.json')
+    fetch('/assets/data/Layers.geojson')
         .then(response => response.json())
         .then(geojson =>{
             turfIdealLines = geojson;
