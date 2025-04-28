@@ -287,13 +287,15 @@ function dibujarTrayectoConError(data, errores, myMap) {
         const coordA = L.latLng(puntoA.Latitude, puntoA.Longitude);
         const coordB = L.latLng(puntoB.Latitude, puntoB.Longitude);
 
-        // Error en el primer punto
-        const error = errores[i];
+        // Promediar error entre punto A y punto B
+        const errorA = errores[i];
+        const errorB = errores[i + 1];
+        const errorPromedio = (errorA + errorB) / 2;
 
-        let color = 'green';
-        if (error > 5) {
+        let color = 'green'; // Default
+        if (errorPromedio > 5) {
             color = 'red';
-        } else if (error > 2) {
+        } else if (errorPromedio > 2) {
             color = 'orange';
         }
 
@@ -305,6 +307,7 @@ function dibujarTrayectoConError(data, errores, myMap) {
         }).addTo(myMap);
     }
 }
+
 
 
 
