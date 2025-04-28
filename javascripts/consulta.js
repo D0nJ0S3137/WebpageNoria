@@ -202,6 +202,7 @@ function cargarDatos(startDateTime, endDateTime, myMap) {
                             <p><strong>Error Máximo:</strong> ${maximo.toFixed(1)} m</p>
                             <p><strong>Desviación Estándar:</strong> ${desviacion.toFixed(1)} m</p>
                         `;
+                        dibujarTrayectoConError(data, errores, myMap);
                     }
                     // (O simplemente puedes llamar processErrors(data) aquí)
                     // processErrors(data);
@@ -260,6 +261,7 @@ function cargarDatos2(startDateTime, endDateTime, myMap) {
                             <p><strong>Error Máximo:</strong> ${maximo.toFixed(1)} m</p>
                             <p><strong>Desviación Estándar:</strong> ${desviacion.toFixed(1)} m</p>
                         `;
+                        dibujarTrayectoConError(data2, errores, myMap);
                     }
 
                     // (O simplemente puedes llamar processErrors(data2); aquí)
@@ -277,6 +279,33 @@ function cargarDatos2(startDateTime, endDateTime, myMap) {
             });
     }
 }
+function dibujarTrayectoConError(data, errores, myMap) {
+    for (let i = 0; i < data.length - 1; i++) {
+        const puntoA = data[i];
+        const puntoB = data[i + 1];
+
+        const coordA = L.latLng(puntoA.Latitude, puntoA.Longitude);
+        const coordB = L.latLng(puntoB.Latitude, puntoB.Longitude);
+
+        // Error en el primer punto
+        const error = errores[i];
+
+        let color = 'green';
+        if (error > 5) {
+            color = 'red';
+        } else if (error > 2) {
+            color = 'orange';
+        }
+
+        L.polyline([coordA, coordB], {
+            color: color,
+            weight: 5,
+            opacity: 0.9,
+            lineJoin: 'round'
+        }).addTo(myMap);
+    }
+}
+
 
 
 
