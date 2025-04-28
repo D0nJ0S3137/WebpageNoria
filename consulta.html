@@ -16,27 +16,33 @@
    <script>
     let turfIdealLines;
     document.addEventListener('DOMContentLoaded', () => {
-    fetch('/assets/data/Layers.geojson')
+        fetch('/assets/data/Layers.geojson')
         .then(response => response.json())
-        .then(geojson =>{
+        .then(geojson => {
             console.log('GeoJSON cargado:', geojson);
+
+            // Filtrar solo las features que sean LineString
             const lineas = geojson.features.filter(f => f.geometry.type === 'LineString');
 
-            if (lineas.length > 0){
+            if (lineas.length > 0) {
                 const lineCollection = {
                     type: 'FeatureCollection',
                     features: lineas
                 };
-                L.geoJSON(geojson, {
-                style: { color: 'green', weight: 4, opacity: 0.7 },
+
+                // Dibujar solo las líneas en el mapa
+                L.geoJSON(lineCollection, {
+                    style: { color: 'green', weight: 5, opacity: 0.7 }
                 }).addTo(myMap);
-                turfIdealLines = geojson;
-            }else{
-                console.error('No se encontraron líneas en el GeoJSON.');
+
+                // Guardar las líneas para cálculos de error
+                turfIdealLines = lineCollection;
+            } else {
+            console.error('No se encontraron LineStrings en el GeoJSON.');
             }
         })
-        }).catch(error => console.error('Error al cargar el archivo JSON:', error));
-        
+        .catch(error => console.error('Error cargando Layers.geojson:', error));
+    });
    </script>
 </head>
 <body>
