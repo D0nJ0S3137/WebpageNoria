@@ -245,22 +245,7 @@ function cargarDatos2(startDateTime, endDateTime, myMap) {
                         const lineCoords = turfIdealLines.features.flatMap(f => f.geometry.coordinates);
                         const turfLine = turf.lineString(lineCoords);
 
-                        const errores = data2.map((pt, i) => {
-                            const punto = turf.point([parseFloat(pt.Longitude), parseFloat(pt.Latitude)]);
-                            const dist = turf.pointToLineDistance(punto, turfLine, { units: 'meters' });
-
-                            // Dibujar círculo en el punto con radio = error
-                            L.circle([pt.Latitude, pt.Longitude], {
-                                radius: dist,
-                                color: 'red',
-                                fillColor: 'red',
-                                fillOpacity: 0.15,
-                                weight: 1
-                            }).addTo(myMap);
-
-                            return dist;
-                        });
-
+                        const errores = calcularErroresContraSegmentos(data2, turfIdealLines);
                         // Recalcular métricas
                         const suma = errores.reduce((a, b) => a + b, 0);
                         const media = suma / errores.length;
@@ -308,6 +293,35 @@ function cargarDatos2(startDateTime, endDateTime, myMap) {
             });
     }
 }
+function calcularErroresContraSegmentos(data, turfIdealLines) {
+    const segmentos = turfIdealLines.features.flatMap(f => {
+        const coords = f.geometry.coordinates;
+        const result = [];
+        for (let i = 0; i < coords.length - 1; i++) {
+            result.push(turf.lineString([coords[i], coords[i + 1]]));
+        }
+        return result;
+    });
+
+    return data.map(pt => {
+        const punto = turf.point([parseFloat(pt.Longitude), parseFloat(pt.Latitude)]);
+        const minDist = Math.min(...segmentos.map(seg => 
+            turf.pointToLineDistance(punto, seg, { units: 'meters' })
+        ));
+
+        // Dibujar círculo para validación
+        L.circle([pt.Latitude, pt.Longitude], {
+            radius: minDist,
+            color: 'red',
+            fillColor: 'red',
+            fillOpacity: 0.15,
+            weight: 1
+        }).addTo(myMap);
+
+        return minDist;
+    });
+}
+
 function dibujarTrayectoConError(data, errores, myMap) {
     for (let i = 0; i < data.length - 1; i++) {
         const puntoA = data[i];
