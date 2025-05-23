@@ -30,29 +30,6 @@ document.addEventListener('DOMContentLoaded', () => {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(myMap);
 
-    rpmGaugeHistoric = new Gauge(document.getElementById("rpmGaugeMap")).setOptions({
-        angle: 0.20, 
-        lineWidth: 0.15,
-        radiusScale: 0.8,
-        pointer: { length: 0.5, strokeWidth: 0.02, color: '#000000' },
-        limitMax: false, 
-        limitMin: false, 
-        colorStart: '#FFC107', 
-        colorStop: '#FFC107', 
-        strokeColor: '#E0E0E0', 
-        generateGradient: true,
-        highDpiSupport: true,
-        staticLabels: { font: "12px sans-serif", labels: [0, 2000, 4000, 6000], color: "#000000", fractionDigits: 0 },
-        staticZones: [
-            {strokeStyle: "#30B32D", min: 0, max: 2000}, 
-            {strokeStyle: "#3498DB", min: 2000, max: 4000}, 
-            {strokeStyle: "#F03E3E", min: 4000, max: 6000},
-        ],
-    });
-    rpmGaugeHistoric.maxValue = 6000;
-    rpmGaugeHistoric.setMinValue(0);
-    rpmGaugeHistoric.set(0);
-
     document.getElementById('submitButton').addEventListener('click', (event) => {
         event.preventDefault();
         limpiarMapa();
@@ -89,60 +66,58 @@ document.addEventListener('DOMContentLoaded', () => {
 
 function cargarDatos2(startDateTime, endDateTime, myMap) {
     limpiarMapa();
-    const vehiculoSeleccionado = document.getElementById('vehicleSelector').value;
-    if (vehiculoSeleccionado === 'vehiculo1') {
-        const link2 = `/consulta-historicos2?startDateTime=${startDateTime}&endDateTime=${endDateTime}`; 
-        fetch(link2)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
+    const link2 = `/consulta-historicos2?startDateTime=${startDateTime}&endDateTime=${endDateTime}`; 
+    fetch(link2)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data2 => {
+            console.log(data2);
+            if (data2.length > 0) {
+                procesarDatosVehiculo(data2, myMap, 'red', truckIcon, false);
+                actualizarSlider(data2, myMap);
+
+                // 🚀🚀🚀 CALCULAR ERRORES AQUÍ DENTRO
+                if (turfIdealLines) {
+                    const lineCoords = turfIdealLines.features
+                        .map(f => f.geometry.coordinates)
+                        .flat();
+                    const turfLine = turf.lineString(lineCoords);
+                    const errores = data2.map(pt => {
+                        const punto = turf.point([pt.Longitude, pt.Latitude]);
+                        return turf.pointToLineDistance(punto, turfLine, { units: 'meters' });
+                    });
+                    const suma = errores.reduce((a, b) => a + b, 0);
+                    const media = suma / errores.length;
+                    const maximo = Math.max(...errores);
+                    const varianza = errores.reduce((a, d) => a + Math.pow(d - media, 2), 0) / errores.length;
+                    const desviacion = Math.sqrt(varianza);
+
+                    document.getElementById('errorContent').innerHTML = `
+                        <p><strong>Error Medio:</strong> ${media.toFixed(1)} m</p>
+                        <p><strong>Error Máximo:</strong> ${maximo.toFixed(1)} m</p>
+                        <p><strong>Desviación Estándar:</strong> ${desviacion.toFixed(1)} m</p>
+                    `;
+                    dibujarTrayectoConError(data2, errores, myMap);
                 }
-                return response.json();
-            })
-            .then(data2 => {
-                console.log(data2);
-                if (data2.length > 0) {
-                    procesarDatosVehiculo(data2, myMap, 'red', truckIcon, false);
-                    actualizarSlider(data2, myMap);
 
-                    // 🚀🚀🚀 CALCULAR ERRORES AQUÍ DENTRO
-                    if (turfIdealLines) {
-                        const lineCoords = turfIdealLines.features
-                            .map(f => f.geometry.coordinates)
-                            .flat();
-                        const turfLine = turf.lineString(lineCoords);
-                        const errores = data2.map(pt => {
-                            const punto = turf.point([pt.Longitude, pt.Latitude]);
-                            return turf.pointToLineDistance(punto, turfLine, { units: 'meters' });
-                        });
-                        const suma = errores.reduce((a, b) => a + b, 0);
-                        const media = suma / errores.length;
-                        const maximo = Math.max(...errores);
-                        const varianza = errores.reduce((a, d) => a + Math.pow(d - media, 2), 0) / errores.length;
-                        const desviacion = Math.sqrt(varianza);
+                // (O simplemente puedes llamar processErrors(data2); aquí)
+                // processErrors(data2);
 
-                        document.getElementById('errorContent').innerHTML = `
-                            <p><strong>Error Medio:</strong> ${media.toFixed(1)} m</p>
-                            <p><strong>Error Máximo:</strong> ${maximo.toFixed(1)} m</p>
-                            <p><strong>Desviación Estándar:</strong> ${desviacion.toFixed(1)} m</p>
-                        `;
-                        dibujarTrayectoConError(data2, errores, myMap);
-                    }
-
-                    // (O simplemente puedes llamar processErrors(data2); aquí)
-                    // processErrors(data2);
-
-                } else {
-                    alert("No hay datos de ruta disponibles para la ventana de tiempo seleccionada.");
-                    document.getElementById('timeSlider').style.display = 'none';
-                }
-            })
-            .catch(error => {
-                console.error('Error en fetch o procesando data:', error);
-                alert("Hubo un problema al cargar los datos.");
+            } else {
+                alert("No hay datos de ruta disponibles para la ventana de tiempo seleccionada.");
                 document.getElementById('timeSlider').style.display = 'none';
-            });
-    }
+            }
+        })
+        .catch(error => {
+            console.error('Error en fetch o procesando data:', error);
+            alert("Hubo un problema al cargar los datos.");
+            document.getElementById('timeSlider').style.display = 'none';
+        });
+    
 }
 function dibujarTrayectoConError(data, errores, myMap) {
     for (let i = 0; i < data.length - 1; i++) {
