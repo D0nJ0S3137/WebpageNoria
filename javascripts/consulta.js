@@ -242,14 +242,26 @@ function cargarDatos2(startDateTime, endDateTime, myMap) {
 
                     // 🚀🚀🚀 CALCULAR ERRORES AQUÍ DENTRO
                     if (turfIdealLines) {
-                        const lineCoords = turfIdealLines.features
-                            .map(f => f.geometry.coordinates)
-                            .flat();
+                        const lineCoords = turfIdealLines.features.flatMap(f => f.geometry.coordinates);
                         const turfLine = turf.lineString(lineCoords);
-                        const errores = data2.map(pt => {
-                            const punto = turf.point([pt.Longitude, pt.Latitude]);
-                            return turf.pointToLineDistance(punto, turfLine, { units: 'meters' });
+
+                        const errores = data2.map((pt, i) => {
+                            const punto = turf.point([parseFloat(pt.Longitude), parseFloat(pt.Latitude)]);
+                            const dist = turf.pointToLineDistance(punto, turfLine, { units: 'meters' });
+
+                            // Dibujar círculo en el punto con radio = error
+                            L.circle([pt.Latitude, pt.Longitude], {
+                                radius: dist,
+                                color: 'red',
+                                fillColor: 'red',
+                                fillOpacity: 0.15,
+                                weight: 1
+                            }).addTo(myMap);
+
+                            return dist;
                         });
+
+                        // Recalcular métricas
                         const suma = errores.reduce((a, b) => a + b, 0);
                         const media = suma / errores.length;
                         const maximo = Math.max(...errores);
@@ -261,7 +273,24 @@ function cargarDatos2(startDateTime, endDateTime, myMap) {
                             <p><strong>Error Máximo:</strong> ${maximo.toFixed(1)} m</p>
                             <p><strong>Desviación Estándar:</strong> ${desviacion.toFixed(1)} m</p>
                         `;
-                        dibujarTrayectoConError(data2, errores, myMap);
+
+                        // Redibujar trayecto coloreado según error
+                        for (let i = 0; i < data2.length - 1; i++) {
+                            const coordA = L.latLng(data2[i].Latitude, data2[i].Longitude);
+                            const coordB = L.latLng(data2[i + 1].Latitude, data2[i + 1].Longitude);
+                            const errAvg = (errores[i] + errores[i + 1]) / 2;
+
+                            let color = 'green';
+                            if (errAvg > 5) color = 'red';
+                            else if (errAvg > 2) color = 'orange';
+
+                            L.polyline([coordA, coordB], {
+                                color,
+                                weight: 5,
+                                opacity: 0.9,
+                                lineJoin: 'round'
+                            }).addTo(myMap);
+                        }
                     }
 
                     // (O simplemente puedes llamar processErrors(data2); aquí)
