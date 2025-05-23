@@ -3,157 +3,245 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>GUIA ERROR ROUTE DASHBOARD</title>
+  <title>Consulta de Rutas</title>
   <link rel="stylesheet" href="https://npmcdn.com/flatpickr/dist/themes/dark.css">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-  <link rel="stylesheet" type="text/css" href="consulta_styles.css">
-  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&family=Roboto:wght@400&display=swap" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/gaugeJS/dist/gauge.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@turf/turf@6/turf.min.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+   <link rel="stylesheet" type="text/css" href="consulta_styles.css">
+   <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" rel="stylesheet">
+   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&family=Roboto:wght@400&display=swap" rel="stylesheet">
+   <script src="https://cdn.jsdelivr.net/npm/gaugeJS/dist/gauge.min.js"></script>
+   <script src="https://cdn.jsdelivr.net/npm/@turf/turf@6/turf.min.js"></script>
+
+   
+   <script>
+    let turfIdealLines;
+    document.addEventListener('DOMContentLoaded', () => {
+        fetch('/assets/data/Layers.geojson')
+        .then(response => response.json())
+        .then(geojson => {
+            console.log('GeoJSON cargado:', geojson);
+
+            // Filtrar solo las features que sean LineString
+            const lineas = geojson.features.filter(f => f.geometry.type === 'LineString');
+
+            if (lineas.length > 0) {
+                const lineCollection = {
+                    type: 'FeatureCollection',
+                    features: lineas
+                };
+
+                // Dibujar solo las líneas en el mapa
+                L.geoJSON(lineCollection, {
+                    style: { color: 'green', weight: 5, opacity: 0.7 }
+                }).addTo(myMap);
+
+                // Guardar las líneas para cálculos de error
+                turfIdealLines = lineCollection;
+            } else {
+            console.error('No se encontraron LineStrings en el GeoJSON.');
+            }
+        })
+        .catch(error => console.error('Error cargando Layers.geojson:', error));
+    });
+   </script>
 </head>
 <body>
 <nav class="navbar navbar-expand-lg" style="background-color: #FBB613;">
-  <div class="container-fluid">
-    <div class="collapse navbar-collapse justify-content-end" id="navbarSupportedContent">
-      <ul class="navbar-nav">
-        <a type="button" class="btn btn-dark btn-consistent-size me-2" href="/">
-          <b>Página Principal</b>
-        </a>
-        <button type="button" class="btn btn-dark btn-consistent-size" data-bs-toggle="modal" data-bs-target="#instructionsModal">
-          <b>Manual de Usuario</b>
-        </button>
-      </ul>
-    </div>  
-  </div>        
-</nav>
+    <div class="container-fluid">
 
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+            data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+            aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse justify-content-end" id="navbarSupportedContent">
+            <ul class="navbar-nav">
+                <select class="form-select" id="vehicleSelector" style="background-color: #343a40; color: white;">
+                    <option value="vehiculo1">Colectivo 1</option>
+                    <option value="vehiculo2">Colectivo 2</option>
+                    <option value="vehiculos">Ambos</option>
+                </select>
+                <a type="button" class="btn btn-dark btn-consistent-size me-2" href="/">
+                    <b>Página Principal</b>
+                </a>
+                <button type="button" class="btn btn-dark btn-consistent-size" data-bs-toggle="modal" data-bs-target="#instructionsModal">
+                    <b>Manual de Usuario</b>
+                </button>
+            </ul>
+        </div>  
+    </div>        
+</nav>
+    
 <div class="container-map">
-  <div class="row">
-    <div class="col-12">
-      <h1 class="text-center my-1 small-title">GUIA ERROR ROUTE DASHBOARD</h1>
-      <h2 class="subtitle">Selecciona el rango de fecha y hora del trayecto para consultar el recorrido histórico del colectivo 2.</h2>
+    <div class="row">
+        <div class="col-12">
+            <h1 class="text-center my-1 small-title">Consulta de Rutas</h1>
+            <h2 class="subtitle">¡Selecciona el rango de fecha y hora del trayecto y el colecetivo que deseas consultar y visualiza sus rutas históricas!</h2>
+        </div>
     </div>
-  </div>
 </div>
 
 <div class="container">
-  <div class="row justify-content-center mb-1">
-    <div class="col-lg-8">
-      <div class="card">
-        <div class="card-body">
-          <div id="timeWindowForm" class="row">
-            <div class="col-md-4">
-              <label for="startDateTime" class="form-label">Fecha y hora de inicio:</label>
-              <input type="text" id="startDateTime" required>
+    <div class="row justify-content-center mb-1">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-body">
+                    <div id="timeWindowForm" class="row">
+                        <div class="col-md-4">
+                            <label for="startDateTime" class="form-label">Fecha y hora de inicio:</label>
+                            <input type="text" id="startDateTime" onchange="updateDateTimeDisplay()" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="endDateTime" class="form-label">Fecha y hora de fin:</label>
+                            <input type="text" id="endDateTime" onchange="updateDateTimeDisplay()" required>
+                        </div>
+                        <span id="startDateSpan"></span> <span id="startTimeSpan"></span>
+                        <span id="endDateSpan"></span> <span id="endTimeSpan"></span>
+                        <div class="col-md-4 d-flex align-items-end"> 
+                            <button type="submit" id="submitButton" class="btn btn-custom btn-sm w-100" style="background-color: #000000; color: white;">Mostrar Rutas</button>
+                        </div>
+                        <div id="errorStats" class="mt-3 p-2 border rounded bg-light">
+                            <h5><b>Estadísticas de Error</b></h5>
+                            <div id="errorContent">No hay error calculado aún.</div>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="col-md-4">
-              <label for="endDateTime" class="form-label">Fecha y hora de fin:</label>
-              <input type="text" id="endDateTime" required>
-            </div>
-            <span id="startDateSpan"></span> <span id="startTimeSpan"></span>
-            <span id="endDateSpan"></span> <span id="endTimeSpan"></span>
-            <div class="col-md-4 d-flex align-items-end"> 
-              <button type="submit" id="submitButton" class="btn btn-custom btn-sm w-100" style="background-color: #000000; color: white;">Mostrar Rutas</button>
-            </div>
-            <div id="errorStats" class="mt-3 p-2 border rounded bg-light">
-              <h5><b>Estadísticas de Error</b></h5>
-              <div id="errorContent">No hay error calculado aún.</div>
-            </div>
-          </div>
         </div>
-      </div>
     </div>
-  </div>
 </div>
 
 <div class="modal fade" id="instructionsModal" tabindex="-1" aria-labelledby="instructionsModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="instructionsModalLabel">Cómo usar el sistema</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        Bienvenido al dashboard de rutas. Aquí debes:
-        <ul>
-          <li>Seleccionar la fecha y hora de inicio y fin del recorrido.</li>
-          <li>Presionar "Mostrar Rutas".</li>
-          <li>Usar el deslizador para revisar paso a paso el recorrido.</li>
-        </ul>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="instructionsModalLabel">Cómo usar la Consulta de Rutas</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          Bienvenido a la Consulta de Recorridos. Aquí debes:
+          <ul>
+            <li>Seleccionar rango de fecha y hora de inicio y fin para ver el recorrido histórico del vehículo.</li>
+            <li>Dar click en Mostrar Recorridos.</li>
+            <li>Usar el botón deslizante para moverte a través del recorrido del vehículo y visualizar sus datos cuando estuvo en cierto lugar.</li>
+          </ul>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+        </div>
       </div>
     </div>
-  </div>
 </div>
 
 <div class="container">
-  <div class="row justify-content-center my-3">
-    <div class="col-lg-8">
-      <input type="range" class="form-range" min="0" max="100" value="0" id="timeSlider">
+    <div class="row justify-content-center my-3">
+        <div class="col-lg-8">
+            <input type="range" class="form-range" min="0" max="100" value="0" id="timeSlider">
+        </div>
     </div>
-  </div>
-  <div class="row">
-    <div class="col-12" style="position: relative;">
-      <div id="mapid" style="height: 70vh; width: 100%;"></div>
-      <div id="gaugeContainer">
-        <div id="titleRpmGauge">Tacómetro RPM</div>
-        <canvas id="rpmGaugeMap"></canvas>
-      </div>
-      <div id="vehicleInfo" style="position: absolute; top: 10px; right: 20px; background: white; padding: 10px; border: 1px solid black; z-index: 1000;">
-        <p><strong>Fecha de paso:</strong> <span id="fechaPaso"></span></p>
-        <p><strong>Hora de paso:</strong> <span id="horaPaso"></span></p>
-        <p style="display: none;"><strong>RPM:</strong> <span id="rpmInfo"></span></p>
-      </div>
-    </div>     
-  </div>
-</div>
 
+    <div class="row">
+        <div class="col-12" style="position: relative;">
+            <div id="mapid" style="height: 480px;"></div>
+            <div id="gaugeContainer">
+                <div id="titleRpmGauge">Tacómetro RPM</div>
+                <canvas id="rpmGaugeMap"></canvas>
+            </div>
+            <div id="vehicleInfo" style="position: absolute; top: 10px; right: 20px; background: white; padding: 10px; border: 1px solid black; z-index: 1000;">
+                <p><strong>Fecha de paso:</strong> <span id="fechaPaso"></span></p>
+                <p><strong>Hora de paso:</strong> <span id="horaPaso"></span></p>
+                <p style="display: none;"><strong>RPM:</strong> <span id="rpmInfo"></span></p>
+            </div>
+        </div>     
+    </div>
+
+    
+</div>
 <a href="/" class="homeBtn material-icons">home</a>
 <span class="infoBtn material-icons" data-bs-toggle="modal" data-bs-target="#instructionsModal">info</span>
 <div id="dateError" class="text-danger"></div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+        integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
+        crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"
+        integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy"
+        crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.0/socket.io.js"></script>
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 <script src="https://unpkg.com/leaflet-polylinedecorator/dist/leaflet.polylineDecorator.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script src="consulta.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@turf/@turg@6/turf.min.js"></script>
+<script src="errorMetrics.js"></script>
 
 <script>
-flatpickr("#startDateTime", {
-  enableTime: true,
-  dateFormat: "Y-m-dTH:i",
-  altInput: true,
-  altFormat: "Y-m-d H:i",
-  altInputClass: "form-control form-control-sm",
-  onChange: function(selectedDates) {
-    endFlatpickr.set('minDate', selectedDates[0]);
-  }
+// Inicialización de Flatpickr para la fecha de inicio
+var startFlatpickr = flatpickr("#startDateTime", {
+    enableTime: true,
+    dateFormat: "Y-m-dTH:i",
+    altInput: true,
+    altFormat: "Y-m-d H:i",
+    time_24hr: false,
+    minuteIncrement: 30,  // Intervalos de una hora
+    altInputClass: "form-control form-control-sm",
+    onChange: function(selectedDates) {
+        // Cuando se selecciona una nueva fecha de inicio, actualiza la fecha mínima del calendario de fecha de fin
+        endFlatpickr.set('minDate', selectedDates[0]);
+    }
 });
 
-const endFlatpickr = flatpickr("#endDateTime", {
-  enableTime: true,
-  dateFormat: "Y-m-dTH:i",
-  altInput: true,
-  altFormat: "Y-m-d H:i",
-  altInputClass: "form-control form-control-sm",
-  minDate: "today"
+// Inicialización de Flatpickr para la fecha de fin
+var endFlatpickr = flatpickr("#endDateTime", {
+    enableTime: true,
+    dateFormat: "Y-m-dTH:i",
+    altInput: true,
+    altFormat: "Y-m-d H:i",
+    time_24hr: false,
+    minuteIncrement: 30,  // Intervalos de una hora
+    altInputClass: "form-control form-control-sm",
+    // Se puede especificar una fecha mínima inicial si es necesario, por ejemplo, la fecha actual
+    minDate: "today"
 });
+
+function openFlatpickrs() {
+    startFlatpickr.open();
+    endFlatpickr.open();
+}
+
 
 document.addEventListener('DOMContentLoaded', () => {
-  const submitButton = document.getElementById('submitButton');
-  submitButton.addEventListener('click', (event) => {
-    event.preventDefault();
-    const startDateTime = document.getElementById('startDateTime').value;
-    const endDateTime = document.getElementById('endDateTime').value;
-    updateDateTimeDisplay(startDateTime, endDateTime);
-    cargarDatos2(startDateTime, endDateTime, myMap);
-  });
+    const startDateTimeInput = document.getElementById('startDateTime');
+    const endDateTimeInput = document.getElementById('endDateTime');
+    const submitButton = document.getElementById('submitButton');
+    const errorMessage = document.getElementById('dateError');
+
+    submitButton.addEventListener('click', (event) => {
+        event.preventDefault(); // Prevenir el envío del formulario por defecto
+        
+        const startDateTime = new Date(startDateTimeInput.value);
+        const endDateTime = new Date(endDateTimeInput.value);
+
+        if (startDateTime > endDateTime) {
+            errorMessage.innerText = "La fecha de inicio no puede ser posterior a la fecha de fin.";
+        } else {
+            errorMessage.innerText = ""; // Limpiar el mensaje de error si las fechas son válidas
+        }
+    });
+
+    // Bloquear la entrada de fechas futuras en el campo "Fecha y hora de inicio"
+    const today = new Date().toISOString().split('T')[0]; // Obtener la fecha actual en formato ISO
+    startDateTimeInput.setAttribute('min', today);
+    
+    // Bloquear la entrada de fechas anteriores a la fecha de inicio en el campo "Fecha y hora de fin"
+    startDateTimeInput.addEventListener('change', () => {
+        endDateTimeInput.setAttribute('min', startDateTimeInput.value);
+    });
 });
 </script>
+
 </body>
 </html>
